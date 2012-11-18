@@ -1,4 +1,6 @@
 public class Move{
 	public Tuple move;
-	public 
+	public Move(Tuple move){
+		this.move = move;
+	}
 }

@@ -5,20 +5,18 @@ public class MCBoard {
     public int grid[][] = new int[8][8];
     public boolean turn = false;
     public ArrayList<Tuple> legalMoves;
-    public HashMap<Tuple, ArrayList<Tuple>> xyWins;
+    // Maps grid spots to an ArrayList of ArrayList 
+    public static XYWins winMap = new XYWins();
     // Order prioritizes middle
     public static int[] orderedMoves = new int[] {3,4,2,5,1,6,0,7};
     public ArrayList<Move> moveList;
+    public int movesPlayed;
     
     public MCBoard() {
-        xyWins = new HashMap<Tuple, ArrayList<Tuple>>();
         legalMoves = new ArrayList<Tuple>();
         for (int i=0; i < grid.length; i++) {
             for (int j=0; j<grid[i].length; j++){
                 grid[i][j] = 2;
-                //TODO
-                ArrayList<Tuple> wins = new ArrayList<Tuple>();
-                xyWins.put(new Tuple(i,j), wins);
             }
         }
         for (int row: orderedMoves) {
@@ -26,28 +24,8 @@ public class MCBoard {
             legalMoves.add(new Tuple(row, 7));
         }
         moveList = new ArrayList<Move>();
+        movesPlayed = 0;
     }
-/*
-    public static void main(String args[]) {
-        MCBoard test = new MCBoard();
-        test.grid[2][0] = 0;
-        test.grid[2][1] = 1;
-        test.grid[3][0] = 0;
-        test.grid[3][1] = 0;
-        test.grid[3][2] = 1;
-        test.grid[3][3] = 0;
-        test.grid[4][0] = 1;
-        test.grid[4][1] = 1;
-        test.grid[4][2] = 0;
-        test.grid[5][0] = 1;
-        
-        print(test);
-        
-        test.move(5,1);
-        test.move(6,0);
-        
-        print(test);
-    }*/
     
     public void move(int r, int c) {
         Tuple move = new Tuple(r,c);
@@ -73,6 +51,7 @@ public class MCBoard {
                     legalMoves.add(new Tuple(r, c+1));
                 }
             }
+            movesPlayed++;
         }
     }
 
@@ -174,4 +153,25 @@ public class MCBoard {
         System.out.print(s);
     }
     
+/*
+    public static void main(String args[]) {
+        MCBoard test = new MCBoard();
+        test.grid[2][0] = 0;
+        test.grid[2][1] = 1;
+        test.grid[3][0] = 0;
+        test.grid[3][1] = 0;
+        test.grid[3][2] = 1;
+        test.grid[3][3] = 0;
+        test.grid[4][0] = 1;
+        test.grid[4][1] = 1;
+        test.grid[4][2] = 0;
+        test.grid[5][0] = 1;
+        
+        print(test);
+        
+        test.move(5,1);
+        test.move(6,0);
+        
+        print(test);
+    }*/
 }
