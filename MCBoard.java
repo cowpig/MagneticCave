@@ -1,17 +1,22 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MCBoard {
+public class MCBoard implements Cloneable{
     public int grid[][] = new int[8][8];
-    public boolean turn = false;
+    public boolean turn = true;
+
+    // Keep a list of legal moves
     public ArrayList<Tuple> legalMoves;
+
     // Maps grid spots to an ArrayList of ArrayList 
     public static XYWins winMap = new XYWins();
+
     // Order prioritizes middle
     public static int[] orderedMoves = new int[] {3,4,2,5,1,6,0,7};
-    public ArrayList<Move> moveList;
-    public int movesPlayed;
-    
+
+    // Keep a list of moves so that we can backtrack
+    public ArrayList<MoveRecord> moveList;
+
     public MCBoard() {
         legalMoves = new ArrayList<Tuple>();
         for (int i=0; i < grid.length; i++) {
@@ -23,35 +28,84 @@ public class MCBoard {
             legalMoves.add(new Tuple(row, 0));
             legalMoves.add(new Tuple(row, 7));
         }
-        moveList = new ArrayList<Move>();
-        movesPlayed = 0;
+        moveList = new ArrayList<MoveRecord>();
     }
+
+    public MCBoard
+        (int[][] grid, boolean turn, ArrayList<Tuple> legalMoves, ArrayList<MoveRecord> moveList) {
+            this.grid = grid;
+            this.turn = turn;
+            this.legalMoves = legalMoves;
+            this.moveList = moveList;
+        }
     
-    public void move(int r, int c) {
-        Tuple move = new Tuple(r,c);
-        if (!legalMoves.contains(move)) {
-            print("Illegal move. Here is a list of available moves:\n");
-            for(Tuple m : legalMoves) {
-                print(m + "\n");
+    public MCBoard clone() {
+        int[][] gridClone = new int[8][8];
+        for (int i=0;i!=8;i++){
+            for (int j=0;j!=8;j++){
+                gridClone[i][j] = grid[i][j];
             }
+        }
+        ArrayList<Tuple> legalMovesClone = new ArrayList<Tuple>();
+        for (Tuple t: legalMoves) {
+            legalMovesClone.add(t.clone());
+        }
+        ArrayList<MoveRecord> moveListClone = new ArrayList<MoveRecord>();
+        for (MoveRecord mr: moveList) {
+            moveListClone.add(mr.clone());
+        }
+        return new MCBoard(gridClone, turn, legalMovesClone, moveListClone);
+    }
+
+    public synchronized void move(Tuple move) throws IllegalMoveException{
+        int r=move.x;
+        int c=move.y;
+        if (!legalMoves.contains(move)) {
+            String msg = "Illegal move. Here is a list of available moves:\n";
+            for(Tuple m : legalMoves) {
+                msg += m.toString() + "\n";
+            }
+            throw new IllegalMoveException(msg);
         } else {
             grid[r][c] = turn? 1:0;
             turn = !turn;
-            movesPlayed++;
             legalMoves.remove(move);
+            Tuple newSpot = null;
             // check left
             if (c!=0){
                 if (grid[r][c-1]==2) {
-                    legalMoves.add(new Tuple(r, c-1));
+                    newSpot = new Tuple(r, c-1);
+                    legalMoves.add(newSpot);
                 }
             }
             // check right
             if (c!=7){
                 if (grid[r][c+1]==2) {
-                    legalMoves.add(new Tuple(r, c+1));
+                    newSpot = new Tuple(r, c+1);
+                    legalMoves.add(newSpot);
                 }
             }
-            movesPlayed++;
+            moveList.add(new MoveRecord(move, newSpot));
+        }
+    }
+
+    public synchronized void move(int x, int y) {
+        move(new Tuple(x,y));
+    }
+
+    public synchronized void takeBack(int n) throws IllegalMoveException {
+        int moves = moveList.size();
+        if (moves < n) 
+            throw new IllegalMoveException("You cannot take back "
+             + n + " moves when only " + moves + " moves have been played!");
+        else {
+            for(int i=0; i<n; i++) {
+                MoveRecord oldMove = moveList.remove(moveList.size()-1);
+                turn = !turn;
+                legalMoves.remove(oldMove.newSpot);
+                grid[oldMove.move.x][oldMove.move.y] = 2;
+                legalMoves.add(oldMove.move);
+            }
         }
     }
 
@@ -80,8 +134,30 @@ public class MCBoard {
             return "e";
     }
     
-    //TODO:
-        //Put all the lines into a set and create a function to check them
+    public int eval() {
+        int w = winner();
+        if (w==1){
+            return Integer.MAX_VALUE;
+        } else if (w==0) {
+            return Integer.MIN_VALUE;
+        }
+        int e = 0;
+        for (int i=0;i!=8;i++){
+            for (int j=0;j!=8;j++){
+                if (grid[i][j] == 0) {
+                    e -= WinGrid.score(i,j);
+                } else if (grid[i][j] == 1)
+                    e += WinGrid.score(i,j);
+            }
+        }
+        return e;
+    }
+
+
+    public static int nega(boolean turn) {
+        return (turn==false ? -1 : 1);
+    }
+
     // returns 2 for nobody, 0 for O and 1 for X
     public int winner() {
         int w;
