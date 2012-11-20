@@ -4,6 +4,8 @@ import java.lang.Math;
 
 public class Tester {
 	public static void main(String[] args){
+		print(-1 * Integer.MAX_VALUE);
+		print(-1 * Integer.MIN_VALUE);
 		// testXYWins();
 		// testMCBoardClone();
 		testMinimax();
@@ -70,6 +72,7 @@ public class Tester {
 		board.move(2,1);
 		board.move(6,0);
 		board.move(5,2);
+		print(board);
 		MinimaxThread mmt = new MinimaxThread((MCBoard)board.clone(), 2, true);
 		mmt.run();
 	}

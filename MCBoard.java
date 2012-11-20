@@ -7,6 +7,7 @@ public class MCBoard implements Cloneable{
 
     // Keep a list of legal moves
     public ArrayList<Tuple> legalMoves;
+    public ArrayList<Tuple> legalMovesBackup;
 
     // Maps grid spots to an ArrayList of ArrayList 
     public static XYWins winMap = new XYWins();
@@ -16,6 +17,9 @@ public class MCBoard implements Cloneable{
 
     // Keep a list of moves so that we can backtrack
     public ArrayList<MoveRecord> moveList;
+
+
+    public int winStatus = 2;
 
     public MCBoard() {
         legalMoves = new ArrayList<Tuple>();
@@ -57,9 +61,18 @@ public class MCBoard implements Cloneable{
         return new MCBoard(gridClone, turn, legalMovesClone, moveListClone);
     }
 
+    // If I am going to use these methods I need to add a winStatus!=2 condition
+    // public Tuple lastMove(){
+    //     return moveList.get(moveList.size()-2).move;
+    // }
+
+    // public Tuple lastMove(int index){
+    //     return moveList.get(moveList.size()-(index+1)).move;
+    // }
+
     public synchronized void move(Tuple move) throws IllegalMoveException{
-        int r=move.x;
-        int c=move.y;
+        int r = move.x;
+        int c = move.y;
         if (!legalMoves.contains(move)) {
             String msg = "Illegal move. Here is a list of available moves:\n";
             for(Tuple m : legalMoves) {
@@ -69,44 +82,62 @@ public class MCBoard implements Cloneable{
         } else {
             grid[r][c] = turn? 1:0;
             turn = !turn;
-            legalMoves.remove(move);
-            Tuple newSpot = null;
-            // check left
-            if (c!=0){
-                if (grid[r][c-1]==2) {
-                    newSpot = new Tuple(r, c-1);
-                    legalMoves.add(newSpot);
+            updateWinner(r,c);
+            if (winStatus != 2) {
+                legalMovesBackup = (ArrayList<Tuple>)legalMoves.clone();
+                legalMoves = new ArrayList<Tuple>();
+                moveList.add(new MoveRecord(move, null));
+            } else {
+                legalMoves.remove(move);
+                Tuple newSpot = null;
+                // check left
+                if (c!=0){
+                    if (grid[r][c-1]==2) {
+                        newSpot = new Tuple(r, c-1);
+                        legalMoves.add(newSpot);
+                    }
                 }
-            }
-            // check right
-            if (c!=7){
-                if (grid[r][c+1]==2) {
-                    newSpot = new Tuple(r, c+1);
-                    legalMoves.add(newSpot);
+                // check right
+                if (c!=7){
+                    if (grid[r][c+1]==2) {
+                        newSpot = new Tuple(r, c+1);
+                        legalMoves.add(newSpot);
+                    }
                 }
+                moveList.add(new MoveRecord(move, newSpot));
             }
-            moveList.add(new MoveRecord(move, newSpot));
         }
     }
 
-    public synchronized void move(int x, int y) {
+    public synchronized void move(int x, int y){
         move(new Tuple(x,y));
     }
 
-    public synchronized void takeBack(int n) throws IllegalMoveException {
+    // returns the MoveRecord of the last move taken back
+    public synchronized MoveRecord takeBack(int n) throws IllegalMoveException {
         int moves = moveList.size();
-        if (moves < n) 
+        if (moves < n) {
             throw new IllegalMoveException("You cannot take back "
              + n + " moves when only " + moves + " moves have been played!");
-        else {
-            for(int i=0; i<n; i++) {
-                MoveRecord oldMove = moveList.remove(moveList.size()-1);
-                turn = !turn;
-                legalMoves.remove(oldMove.newSpot);
-                grid[oldMove.move.x][oldMove.move.y] = 2;
-                legalMoves.add(oldMove.move);
-            }
+        } else if (n < 1) {
+            throw new IllegalMoveException("You cannot take back zero moves!");
         }
+        MoveRecord oldMove = null;
+        if (winStatus != 2) {
+            winStatus = 2;
+            legalMoves = (ArrayList<Tuple>) legalMovesBackup.clone();
+            moveList.remove(moveList.size()-1);
+            n -= 1;
+        }
+        for(int i=0; i<n; i++) {
+            oldMove = moveList.remove(moveList.size()-1);
+            turn = !turn;
+            legalMoves.remove(oldMove.newSpot);
+            grid[oldMove.move.x][oldMove.move.y] = 2;
+            legalMoves.add(oldMove.move);
+        }
+        return oldMove;
+    
     }
 
     public String toString() {
@@ -120,6 +151,7 @@ public class MCBoard implements Cloneable{
             out += "] " + i + "\n";
         }
         out += "\n   0 1 2 3 4 5 6 7\n\n";
+        out += "(Turn : " + (turn ? 1 : 0) + ")\n";
         return out;
     }
     
@@ -138,12 +170,10 @@ public class MCBoard implements Cloneable{
         int e = 0;
         int player = turn ? 1 : 0;
         int otherPlayer = turn ? 0 : 1;
-        //TODO : optimize winner()
-        int w = winner();
-        if (w==player){
-            return Integer.MAX_VALUE;
-        } else if (w==otherPlayer) {
-            return Integer.MIN_VALUE;
+        if (winStatus==player){
+            return infHolder.MAX;
+        } else if (winStatus==otherPlayer) {
+            return infHolder.MIN;
         } else {
             for (int i=0;i!=8;i++){
                 for (int j=0;j!=8;j++){
@@ -163,6 +193,32 @@ public class MCBoard implements Cloneable{
 
     public static int nega(boolean turn) {
         return (turn==false ? -1 : 1);
+    }
+
+    public void updateWinner(int x, int y) {
+        updateWinner(new Tuple(x,y));
+    }
+
+    public void updateWinner(Tuple t) {
+        ArrayList<Tuple[]> linesToCheck = winMap.getWins(t);
+        // print("Checking winner...\n");
+        for (Tuple[] ts : linesToCheck) {
+            // print("\tChecking line " + ts[0] + " - " + ts[4] + "\n");
+            int winner = turn ? 1 : 0;
+            for (int i=0; i<5; i++){
+                if (grid[ts[i].x][ts[i].y] != winner) {
+                    winner = 2;
+                    break;
+                }
+            }
+            if (winner != 2) {
+                // print("\t\tWinner found!\n\n");
+                // print(toString());
+                winStatus = winner;
+                // int c = 90/0;
+            }
+        }
+
     }
 
     // returns 2 for nobody, 0 for O and 1 for X
