@@ -1,4 +1,8 @@
-package common;
-public Class AlphaBetaThread extends Thread{
-	
+
+public class AlphaBetaThread extends Thread{
+	public MCBoard board;
+	public int positionsSeen;
+	public AlphaBetaThread(){
+
+	}
 }

@@ -135,24 +135,31 @@ public class MCBoard implements Cloneable{
     }
     
     public int eval() {
-        int w = winner();
-        if (w==1){
-            return Integer.MAX_VALUE;
-        } else if (w==0) {
-            return Integer.MIN_VALUE;
-        }
         int e = 0;
-        for (int i=0;i!=8;i++){
-            for (int j=0;j!=8;j++){
-                if (grid[i][j] == 0) {
-                    e -= WinGrid.score(i,j);
-                } else if (grid[i][j] == 1)
-                    e += WinGrid.score(i,j);
+        int player = turn ? 1 : 0;
+        int otherPlayer = turn ? 0 : 1;
+        //TODO : optimize winner()
+        int w = winner();
+        if (w==player){
+            return Integer.MAX_VALUE;
+        } else if (w==otherPlayer) {
+            return Integer.MIN_VALUE;
+        } else {
+            for (int i=0;i!=8;i++){
+                for (int j=0;j!=8;j++){
+                    if (grid[i][j] == otherPlayer) {
+                        e -= WinGrid.score(i,j);
+                    } else if (grid[i][j] == player)
+                        e += WinGrid.score(i,j);
+                }
             }
         }
         return e;
     }
 
+    public boolean isFull(){
+        return (this.moveList.size() == 64);
+    }
 
     public static int nega(boolean turn) {
         return (turn==false ? -1 : 1);
