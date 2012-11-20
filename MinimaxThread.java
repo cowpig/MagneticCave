@@ -1,4 +1,5 @@
 // An iterative deepening minimax algorithm that uses an MCBoard
+import java.util.HashMap;
 
 public class MinimaxThread implements Runnable {
 	public MCBoard board;
@@ -44,16 +45,16 @@ public class MinimaxThread implements Runnable {
 	    int x = Integer.MIN_VALUE;
 	    for (int i=0;i<board.legalMoves.size();i++) {
 	        board.move(board.legalMoves.get(i));
-	        return max(x, -1*minimax(currentDepth+1));
+	        x = max(x, -1*minimax(currentDepth+1));
 	        board.takeBack(1);
 	    }
-	    return x
+	    return x;
 	}
 
 	public void run() {
 		while(cont) {
 			for (Tuple t : moveEvals.keySet()) {
-				moveEvals.set(t, minimax(0));
+				moveEvals.put(t, minimax(0));
 			}
 			if (verbose)
 				System.out.println(toString());
