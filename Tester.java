@@ -5,7 +5,8 @@ import java.lang.Math;
 public class Tester {
 	public static void main(String[] args){
 		// testXYWins();
-		testMCBoardClone();
+		// testMCBoardClone();
+		testMinimax();
 	}
 	public static void testXYWins(){
 		XYWins w = new XYWins();
