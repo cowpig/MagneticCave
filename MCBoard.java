@@ -1,13 +1,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class MCBoard implements Cloneable{
     public int grid[][] = new int[8][8];
     public boolean turn = true;
 
     // Keep a list of legal moves
-    public ArrayList<Tuple> legalMoves;
-    public ArrayList<Tuple> legalMovesBackup;
+    public LinkedList<Tuple> legalMoves;
+    public LinkedList<Tuple> legalMovesBackup;
 
     // Maps grid spots to an ArrayList of ArrayList 
     public static XYWins winMap = new XYWins();
@@ -22,7 +23,7 @@ public class MCBoard implements Cloneable{
     public int winStatus = 2;
 
     public MCBoard() {
-        legalMoves = new ArrayList<Tuple>();
+        legalMoves = new LinkedList<Tuple>();
         for (int i=0; i < grid.length; i++) {
             for (int j=0; j<grid[i].length; j++){
                 grid[i][j] = 2;
@@ -36,7 +37,7 @@ public class MCBoard implements Cloneable{
     }
 
     public MCBoard
-        (int[][] grid, boolean turn, ArrayList<Tuple> legalMoves, ArrayList<MoveRecord> moveList) {
+        (int[][] grid, boolean turn, LinkedList<Tuple> legalMoves, ArrayList<MoveRecord> moveList) {
             this.grid = grid;
             this.turn = turn;
             this.legalMoves = legalMoves;
@@ -50,7 +51,7 @@ public class MCBoard implements Cloneable{
                 gridClone[i][j] = grid[i][j];
             }
         }
-        ArrayList<Tuple> legalMovesClone = new ArrayList<Tuple>();
+        LinkedList<Tuple> legalMovesClone = new LinkedList<Tuple>();
         for (Tuple t: legalMoves) {
             legalMovesClone.add(t.clone());
         }
@@ -84,9 +85,9 @@ public class MCBoard implements Cloneable{
             turn = !turn;
             updateWinner(r,c);
             if (winStatus != 2) {
-                legalMovesBackup = (ArrayList<Tuple>)legalMoves.clone();
-                legalMoves = new ArrayList<Tuple>();
-                moveList.add(0, new MoveRecord(move, null));
+                legalMovesBackup = (LinkedList<Tuple>)legalMoves.clone();
+                legalMoves = new LinkedList<Tuple>();
+                moveList.add(new MoveRecord(move, null));
             } else {
                 legalMoves.remove(move);
                 Tuple newSpot = null;
@@ -94,17 +95,17 @@ public class MCBoard implements Cloneable{
                 if (c!=0){
                     if (grid[r][c-1]==2) {
                         newSpot = new Tuple(r, c-1);
-                        legalMoves.add(newSpot);
+                        legalMoves.addFirst(newSpot);
                     }
                 }
                 // check right
                 if (c!=7){
                     if (grid[r][c+1]==2) {
                         newSpot = new Tuple(r, c+1);
-                        legalMoves.add(newSpot);
+                        legalMoves.addFirst(newSpot);
                     }
                 }
-                moveList.add(0, new MoveRecord(move, newSpot));
+                moveList.add(new MoveRecord(move, newSpot));
             }
         }
     }
@@ -125,7 +126,7 @@ public class MCBoard implements Cloneable{
         MoveRecord oldMove = null;
         if (winStatus != 2) {
             winStatus = 2;
-            legalMoves = (ArrayList<Tuple>) legalMovesBackup.clone();
+            legalMoves = (LinkedList<Tuple>) legalMovesBackup.clone();
             moveList.remove(moveList.size()-1);
             n -= 1;
         }

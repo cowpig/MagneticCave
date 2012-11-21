@@ -1,8 +1,10 @@
+import java.util.Scanner;
+
 public class HumanPlayer extends Player {
-	public Player(MCBoard board){
+	public HumanPlayer(MCBoard board){
 		this.board = board;
 	}
-	public int getMove(){
+	public void getMove(){
 		Scanner key = new Scanner(System.in);
 		println("Enter the next move");
 		String input = key.nextLine();
@@ -33,5 +35,8 @@ public class HumanPlayer extends Player {
 	}
 	public String toString(){
 		return ("Human");
+	}
+	public void println(Object o){
+		System.out.println(o);
 	}
 }

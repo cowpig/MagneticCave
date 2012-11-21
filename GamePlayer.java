@@ -1,12 +1,13 @@
 import java.util.Scanner;
 
 public class GamePlayer {
-	public Player x;
-	public Player o;
 	public static void main(String[] args) {
+		Player x;
+		Player o;
 		MCBoard board = new MCBoard();
-		if (args.length() == 2) {
-			
+		if (args.length == 2) {
+			x = new HumanPlayer(board);
+			o = new HumanPlayer(board);
 		} else {
 			System.out.println("Beginning Magnetic Cave with two human players.");
 			x = new HumanPlayer(board);
