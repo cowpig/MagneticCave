@@ -4,11 +4,10 @@ import java.lang.Math;
 
 public class Tester {
 	public static void main(String[] args){
-		print(-1 * Integer.MAX_VALUE);
-		print(-1 * Integer.MIN_VALUE);
 		// testXYWins();
 		// testMCBoardClone();
-		testMinimax();
+		// testMinimax();
+		testAlphaBeta();
 	}
 	public static void testXYWins(){
 		XYWins w = new XYWins();
@@ -55,6 +54,29 @@ public class Tester {
 		print("Old board:");
 		print(board);
 	}
+
+	public static void testAlphaBeta(){
+		MCBoard board = new MCBoard();
+		board.move(5,0);
+		board.move(4,0);
+		board.move(3,0);
+		board.move(3,1);
+		board.move(3,2);
+		board.move(3,3);
+		board.move(4,1);
+		board.move(4,2);
+		board.move(4,3);
+		board.move(5,1);
+		board.move(1,0);
+		board.move(2,0);
+		board.move(2,1);
+		board.move(6,0);
+		board.move(5,2);
+		print(board);
+		AlphaBetaThread abt = new AlphaBetaThread((MCBoard)board.clone(), 2, true);
+		abt.run();
+	}
+
 	public static void testMinimax(){
 		MCBoard board = new MCBoard();
 		board.move(5,0);

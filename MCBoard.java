@@ -86,7 +86,7 @@ public class MCBoard implements Cloneable{
             if (winStatus != 2) {
                 legalMovesBackup = (ArrayList<Tuple>)legalMoves.clone();
                 legalMoves = new ArrayList<Tuple>();
-                moveList.add(new MoveRecord(move, null));
+                moveList.add(0, new MoveRecord(move, null));
             } else {
                 legalMoves.remove(move);
                 Tuple newSpot = null;
@@ -104,7 +104,7 @@ public class MCBoard implements Cloneable{
                         legalMoves.add(newSpot);
                     }
                 }
-                moveList.add(new MoveRecord(move, newSpot));
+                moveList.add(0, new MoveRecord(move, newSpot));
             }
         }
     }
