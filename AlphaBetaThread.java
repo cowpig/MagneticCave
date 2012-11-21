@@ -74,7 +74,9 @@ public class AlphaBetaThread implements Runnable {
 		startTime = System.currentTimeMillis();
 		while(cont) {
 			for (Tuple t : moveEvals.keySet()) {
-				moveEvals.put(t, alphabeta(0, infHolder.MIN, infHolder.MAX));
+				board.move(t);
+				moveEvals.put(t, -1*alphabeta(0, infHolder.MIN, infHolder.MAX));
+				board.takeBack(1);
 			}
 			if (verbose)
 				System.out.println(toString());

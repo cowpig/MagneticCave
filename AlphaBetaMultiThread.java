@@ -1,45 +1,33 @@
 // An iterative deepening minimax algorithm that uses an MCBoard with alpha-beta pruning
-// This version is designed to be run in parallel
-
-// TODO: big time overhaul
-
 import java.util.HashMap;
 import java.lang.Math;
 
-public class AlphaBetaMultiThread implements Thread {
+public class AlphaBetaThread extends Thread {
 	public MCBoard board;
 	public int depth;
-	public HashMap<Tuple, Integer> moveEvals;
 	boolean cont = true;
 	boolean verbose = false;
+	public Tuple move;
 	public int evals = 0;
 	public long startTime = -1L;
+	int eval = 0;
 
-	public AlphaBetaMultiThread(MCBoard board) {
+	public AlphaBetaThread(MCBoard board) {
 		this.board = board;
 		depth = 1;
-		moveEvals = new HashMap<Tuple, Integer>();
-		for (Tuple t : board.legalMoves) {
-			moveEvals.put(t, new Integer(0));
-		}
+		move = board.lastMove(1);
 	}
 
-	public AlphaBetaMultiThread(MCBoard board, int initialDepth) {
+	public AlphaBetaThread(MCBoard board, int initialDepth) {
 		this.board = board;
 		depth = initialDepth;
-		moveEvals = new HashMap<Tuple, Integer>();
-		for (Tuple t : board.legalMoves) {
-			moveEvals.put(t, new Integer(0));
-		}
+		move = board.lastMove(1);
 	}
 
-	public AlphaBetaMultiThread(MCBoard board, int initialDepth, boolean verbose) {
+	public AlphaBetaThread(MCBoard board, int initialDepth, boolean verbose) {
 		this.board = board;
 		depth = initialDepth;
-		moveEvals = new HashMap<Tuple, Integer>();
-		for (Tuple t : board.legalMoves) {
-			moveEvals.put(t, new Integer(0));
-		}
+		move = board.lastMove(1);
 		this.verbose = verbose;
 	}
 
@@ -77,9 +65,7 @@ public class AlphaBetaMultiThread implements Thread {
 	public void run() {
 		startTime = System.currentTimeMillis();
 		while(cont) {
-			for (Tuple t : moveEvals.keySet()) {
-				moveEvals.put(t, alphabeta(0, infHolder.MIN, infHolder.MAX));
-			}
+			moveEvals.put(t, -1*alphabeta(0, infHolder.MIN, infHolder.MAX));
 			if (verbose)
 				System.out.println(toString());
 			depth += 1;

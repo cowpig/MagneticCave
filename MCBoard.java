@@ -62,14 +62,11 @@ public class MCBoard implements Cloneable{
         return new MCBoard(gridClone, turn, legalMovesClone, moveListClone);
     }
 
-    // If I am going to use these methods I need to add a winStatus!=2 condition
-    // public Tuple lastMove(){
-    //     return moveList.get(moveList.size()-2).move;
-    // }
-
-    // public Tuple lastMove(int index){
-    //     return moveList.get(moveList.size()-(index+1)).move;
-    // }
+    public Tuple lastMove(int index){
+        if (winStatus != 2) 
+            return moveListBackup.get(moveList.size()-(index+1)).move;    
+        return moveList.get(moveList.size()-(index+1)).move;
+    }
 
     public synchronized void move(Tuple move) throws IllegalMoveException{
         int r = move.x;

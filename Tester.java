@@ -73,7 +73,8 @@ public class Tester {
 		board.move(6,0);
 		board.move(5,2);
 		print(board);
-		AlphaBetaThread abt = new AlphaBetaThread((MCBoard)board.clone(), 2, true);
+		print("Starting eval: " + board.eval() + "\n");
+		AlphaBetaThread abt = new AlphaBetaThread((MCBoard)board.clone(), 0, true);
 		abt.run();
 	}
 
