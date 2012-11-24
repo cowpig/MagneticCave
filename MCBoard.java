@@ -63,8 +63,8 @@ public class MCBoard implements Cloneable{
     }
 
     public Tuple lastMove(int index){
-        if (winStatus != 2) 
-            return moveListBackup.get(moveList.size()-(index+1)).move;    
+        // if (winStatus != 2) 
+        //     return moveListBackup.get(moveList.size()-(index+1)).move;
         return moveList.get(moveList.size()-(index+1)).move;
     }
 

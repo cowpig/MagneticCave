@@ -2,29 +2,28 @@
 import java.util.HashMap;
 import java.lang.Math;
 
-public class AlphaBetaThread extends Thread {
+public class AlphaBetaMultiThread extends Thread {
 	public MCBoard board;
 	public int depth;
-	boolean cont = true;
 	boolean verbose = false;
 	public Tuple move;
 	public int evals = 0;
 	public long startTime = -1L;
 	int eval = 0;
 
-	public AlphaBetaThread(MCBoard board) {
+	public AlphaBetaMultiThread(MCBoard board) {
 		this.board = board;
 		depth = 1;
 		move = board.lastMove(1);
 	}
 
-	public AlphaBetaThread(MCBoard board, int initialDepth) {
+	public AlphaBetaMultiThread(MCBoard board, int initialDepth) {
 		this.board = board;
 		depth = initialDepth;
 		move = board.lastMove(1);
 	}
 
-	public AlphaBetaThread(MCBoard board, int initialDepth, boolean verbose) {
+	public AlphaBetaMultiThread(MCBoard board, int initialDepth, boolean verbose) {
 		this.board = board;
 		depth = initialDepth;
 		move = board.lastMove(1);
@@ -64,11 +63,11 @@ public class AlphaBetaThread extends Thread {
 
 	public void run() {
 		startTime = System.currentTimeMillis();
-		while(cont) {
-			moveEvals.put(t, -1*alphabeta(0, infHolder.MIN, infHolder.MAX));
+		while(true){ 
+			depth += 1;
+			eval = -1*alphabeta(0, infHolder.MIN, infHolder.MAX);
 			if (verbose)
 				System.out.println(toString());
-			depth += 1;
 		}
 	}
 
@@ -82,18 +81,13 @@ public class AlphaBetaThread extends Thread {
 		return y;
 	}
 	public String toString(){
-		String out = "";
+		String out;
 		if (startTime != -1L) {
 			long evalTime = System.currentTimeMillis() - startTime;
-			out = "Depth " + depth + ", " + evals + " positions evaluated in " + evalTime + " millisenconds:\n";
-			for (Tuple t : moveEvals.keySet()) {
-				out += t.toString() + "\t" + moveEvals.get(t) + "\n";
-			}
+			out = move.toString() + ": " + eval + "\t" + evals + " evals in " + evalTime + " ms at depth " + depth;
 		} else {
 			out = "Minimax thread not yet running";
 		}
 		return out;
 	}
 }
-
-

@@ -1,11 +1,13 @@
 import java.util.Scanner;
 
 public class HumanPlayer extends Player {
-	public HumanPlayer(MCBoard board){
+	public Scanner key;
+
+	public HumanPlayer(MCBoard board, Scanner key){
 		this.board = board;
+		this.key = key;
 	}
 	public void getMove(){
-		Scanner key = new Scanner(System.in);
 		println("Enter the next move");
 		String input = key.nextLine();
 		if (input.length() > 3) {
@@ -31,7 +33,6 @@ public class HumanPlayer extends Player {
 				println(e);
 			}
 		}
-		key.close();
 	}
 	public String toString(){
 		return ("Human");
