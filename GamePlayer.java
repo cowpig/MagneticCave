@@ -14,7 +14,7 @@ public class GamePlayer {
 			x = new HumanPlayer(board, key);
 			o = new HumanPlayer(board, key);
 		}
-		while (board.winner() == 2 && board.moveList.size() < 64) {
+		while (board.winStatus == 2 && board.moveList.size() < 64) {
 			println(board);
 			if (board.turn)
 				x.getMove();

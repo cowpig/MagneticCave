@@ -8,7 +8,32 @@ public class Tester {
 		// testMCBoardClone();
 		// testMinimax();
 		// testAlphaBeta();
-		testMultiThread();
+		// testMultiThread();
+		testWeightedThread();
+	}
+
+	public static void testWeightedThread(){
+		MCBoard board = new MCBoard();
+		board.move(5,0);
+		board.move(4,0);
+		board.move(3,0);
+		board.move(3,1);
+		board.move(3,2);
+		board.move(3,3);
+		board.move(4,1);
+		board.move(4,2);
+		board.move(4,3);
+		board.move(5,1);
+		board.move(1,0);
+		board.move(2,0);
+		board.move(2,1);
+		board.move(6,0);
+		board.move(5,2);
+		print(board);
+		print("Starting eval: " + board.eval() + "\n");
+		int[] weights = {0,100,300,900,2700};
+		WeightedAlphaBetaThread wabt = new WeightedAlphaBetaThread((MCBoard)board.clone(), weights);
+		wabt.start();
 	}
 
 	public static void testMultiThread(){

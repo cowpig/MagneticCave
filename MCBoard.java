@@ -69,6 +69,7 @@ public class MCBoard implements Cloneable{
     }
 
     public synchronized void move(Tuple move) throws IllegalMoveException{
+        // print("Moving " + move + "\n");
         int r = move.x;
         int c = move.y;
         if (!legalMoves.contains(move)) {
@@ -122,13 +123,17 @@ public class MCBoard implements Cloneable{
         }
         MoveRecord oldMove = null;
         if (winStatus != 2) {
+            // print ("Taking back winner at " + lastMove(0) + "\n");
             winStatus = 2;
             legalMoves = (LinkedList<Tuple>) legalMovesBackup.clone();
-            moveList.remove(moveList.size()-1);
+            oldMove = moveList.remove(moveList.size()-1);
+            grid[oldMove.move.x][oldMove.move.y] = 2;
+            // print (oldMove.move + "removed.\n");
             n -= 1;
         }
         for(int i=0; i<n; i++) {
             oldMove = moveList.remove(moveList.size()-1);
+            // print ("Taking back move " + oldMove.move + "\n");
             turn = !turn;
             legalMoves.remove(oldMove.newSpot);
             grid[oldMove.move.x][oldMove.move.y] = 2;
@@ -164,6 +169,8 @@ public class MCBoard implements Cloneable{
             return "e";
     }
     
+    // basic initial evaluation function, score simply based on the number of possible wins per spot on the grid
+    // for example, (0,0) has a score of 3, for its contribution to three possible winning lines.
     public int eval() {
         int e = 0;
         int player = turn ? 1 : 0;
@@ -185,6 +192,62 @@ public class MCBoard implements Cloneable{
         return e;
     }
 
+
+    // This is the eval function designed for genetic algorithm
+    // Which will search for the best weights for position features
+    public int eval(int[] weights) {
+        int e = 0;
+        int player = turn ? 1 : 0;
+        int otherPlayer = turn ? 0 : 1;
+        if (winStatus==player){
+            return infHolder.MAX;
+        } else if (winStatus==otherPlayer) {
+            return infHolder.MIN;
+        } else {
+            for (int i=0;i!=8;i++){
+                for (int j=0;j!=8;j++){
+                    if (grid[i][j] == otherPlayer) {
+                        e -= scoreSpot(i,j,weights);
+                    } else if (grid[i][j] == player)
+                        e += scoreSpot(i,j,weights);
+                }
+            }
+        }
+        return e;
+    }
+
+
+    public int scoreSpot(int r, int c, int[] weights) {
+        int score = 0;
+        int player = grid[r][c];
+        int otherPlayer = (player==0) ? 1 : 0;
+        // Iterates through every win line which contains a certain spot
+        for (Tuple[] line : winMap.getWins(r, c)) {
+            int lineScore = 0;
+            for (Tuple t : line) {
+                if (grid[t.x][t.y] == otherPlayer ){
+                    lineScore = 0;
+                    break;
+                } else if (grid[t.x][t.y] == player) {
+                    lineScore++;
+                }
+            }
+            // For every line containing only the player's pieces, adds to score
+            // weighted by the weights[] array
+            try{score += weights[lineScore];} catch (ArrayIndexOutOfBoundsException e) {
+                // print("Array index " + lineScore + " found when examining line:\n");
+                for (Tuple t : line) {
+                    // print ("\t"+t+", "+grid[t.x][t.y]+"\n");
+                }
+                // print("On board: " + toString());
+                // print("Last move played: " + lastMove(0) + "\n");
+                // print("Winstatus: " + winStatus + "\n\n");
+                int crash = 99/0;
+            }
+        }
+        return score;
+    }
+
     public boolean isFull(){
         return (this.moveList.size() == 64);
     }
@@ -199,20 +262,24 @@ public class MCBoard implements Cloneable{
 
     public void updateWinner(Tuple t) {
         ArrayList<Tuple[]> linesToCheck = winMap.getWins(t);
-        // print("Checking winner...\n");
+        int winner = grid[t.x][t.y];
+        // print("Checking winner... player: " + winner + " spot " + t + "\n");
         for (Tuple[] ts : linesToCheck) {
-            // print("\tChecking line " + ts[0] + " - " + ts[4] + "\n");
-            int winner = turn ? 1 : 0;
+            // print("\tChecking line " + ts[0] + " - " + ts[4] + " | ");
+            boolean winnerFound = true;
             for (int i=0; i<5; i++){
+                // print(grid[ts[i].x][ts[i].y] +"-"+ts[i]+".");
                 if (grid[ts[i].x][ts[i].y] != winner) {
-                    winner = 2;
+                    winnerFound = false;
+                    // print("...No winner on this line" + "\n");
                     break;
                 }
             }
-            if (winner != 2) {
+            if (winnerFound) {
                 // print("\t\tWinner found!\n\n");
                 // print(toString());
                 winStatus = winner;
+                break;
                 // int c = 90/0;
             }
         }
@@ -220,7 +287,8 @@ public class MCBoard implements Cloneable{
     }
 
     // returns 2 for nobody, 0 for O and 1 for X
-    public int winner() {
+    // replaced by much more efficient hash table lookup
+    /*public int winner() {
         int w;
         // check rows
         for (int c=2; c<6; c++) {
@@ -284,7 +352,7 @@ public class MCBoard implements Cloneable{
             }
         }
         return 2;
-    }
+    }*/
 
     public static void print (Object s) {
         System.out.print(s);
