@@ -23,7 +23,7 @@ public class GamePlayer {
 		}
 		println(board);
 		if (board.moveList.size() < 64)
-			println("Game over. " + (board.winStatus==0? "O" : "X") + " wins.");
+			println("Game over. " + (board.winStatus==0? "X" : "O") + " wins.");
 		else
 			println("The game ended in a tie.");
 		key.close();

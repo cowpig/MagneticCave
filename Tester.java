@@ -7,8 +7,33 @@ public class Tester {
 		// testXYWins();
 		// testMCBoardClone();
 		// testMinimax();
-		testAlphaBeta();
+		// testAlphaBeta();
+		testMultiThread();
 	}
+
+	public static void testMultiThread(){
+		MCBoard board = new MCBoard();
+		board.move(5,0);
+		board.move(4,0);
+		board.move(3,0);
+		board.move(3,1);
+		board.move(3,2);
+		board.move(3,3);
+		board.move(4,1);
+		board.move(4,2);
+		board.move(4,3);
+		board.move(5,1);
+		board.move(1,0);
+		board.move(2,0);
+		board.move(2,1);
+		board.move(6,0);
+		board.move(5,2);
+		print(board);
+		print("Starting eval: " + board.eval() + "\n");
+		GameThread gt = new GameThread((MCBoard)board.clone(), 2, true);
+		gt.start();
+	}
+
 	public static void testXYWins(){
 		XYWins w = new XYWins();
 		// for (Tuple k: w.winMap.keySet()) {
