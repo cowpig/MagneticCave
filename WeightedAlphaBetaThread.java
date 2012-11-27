@@ -1,12 +1,12 @@
 // An iterative deepening minimax algorithm that uses an MCBoard with alpha-beta pruning
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.lang.Math;
 
 public class WeightedAlphaBetaThread extends Thread {
 	public MCBoard board;
 	public int depth;
 	public HashMap<Tuple, Integer> moveEvals;
-	boolean cont = true;
 	boolean verbose = false;
 	public int evals = 0;
 	public long startTime = -1L;
@@ -14,66 +14,100 @@ public class WeightedAlphaBetaThread extends Thread {
 
 	public WeightedAlphaBetaThread(MCBoard board, int[] weights) {
 		this.board = board;
-		depth = 3;
+		depth = 2;
 		moveEvals = new HashMap<Tuple, Integer>();
 		for (Tuple t : board.legalMoves) {
-			moveEvals.put(t, new Integer(0));
+			moveEvals.put(t, 0);
 		}
 		this.weights = weights;
 	}
 
-	public int alphabeta(int currentDepth, int alpha, int beta) {
-    	// System.out.println("\n============\nAlpha-Beta called: depth " + currentDepth + " on position");
-    	// System.out.println("Alpha at " + alpha + ", beta at " + beta);
-    	// System.out.println(board);
+	public int alphabeta_min(int currentDepth, int alpha, int beta, Tuple lastMove) {
 	    if (currentDepth >= depth || board.legalMoves.isEmpty()) {
-	    	int eval = board.eval(weights);
+	    	if (board.winStatus != 2) {
+	    		return Integer.MAX_VALUE;
+	    	}
+	    	int eval = -1*board.eval(weights);
 	    	evals++;
-	    	// System.out.println("Returning eval: " + eval);
-	    	// if (eval < -1000000 || eval > 1000000)
-	    		// System.out.println("WIN DETECTED");
 	    	return eval;
 	    }
-	    int x = infHolder.MIN;
-	    for (int i=0;i<board.legalMoves.size();i++) {
-	    		Tuple move = board.legalMoves.get(i).clone();
-	    	// System.out.println("Now searching move " + move);
-	        board.move(board.legalMoves.get(i));
-	        int x0 = -1*alphabeta(currentDepth+1, beta*-1, alpha*-1);
-	        if (x0 >= beta) {
-	        	// System.out.println("Move " + move + " better than beta at eval " + x0);
+	    int b = infHolder.MAX;
+	    LinkedList<Tuple> list = (LinkedList<Tuple>) board.legalMoves.clone();
+	    for (Tuple chosenMove : list) {
+	        board.move(chosenMove);
+	        int s = alphabeta_max(currentDepth+1, alpha, beta, chosenMove.clone());
+	        b = min(b, s);
+	        if (b <= alpha) {
+	        	board.takeBack(1);
+	        	return b;
+	        }
+	        if (b < beta) {
+	        	beta = b;
+	        }
+	        board.takeBack(1);
+	    }
+	    return beta;
+	}
+
+	public int alphabeta_max(int currentDepth, int alpha, int beta, Tuple lastMove) {
+	    if (currentDepth >= depth || board.legalMoves.isEmpty()) {
+	    	int eval = -1*board.eval(weights);
+	    	evals++;
+	    	return eval;
+	    }
+	    int a = infHolder.MIN;
+	    LinkedList<Tuple> list = (LinkedList<Tuple>) board.legalMoves.clone();
+	    for (Tuple chosenMove : list) {
+	        board.move(chosenMove);
+	        int s = alphabeta_min(currentDepth+1, alpha, beta, chosenMove.clone());
+	        a = max(a, s);
+	        if (a >= beta) {
 	        	board.takeBack(1);
 	        	return beta;
 	        }
-	        if (x0 > alpha) {
-	        	// System.out.println("Move " + move + " sets alpha to " + x0);
-	        	alpha = x;
+	        if (a > alpha) {
+	        	alpha = a;
 	        }
-	        x = max(x,x0);
 	        board.takeBack(1);
-	        // MoveRecord oldMove = board.takeBack(1);
-	        // System.out.println("Took back " + oldMove.move + " at depth " + currentDepth);
 	    }
-	    return x;
+	    return alpha;
 	}
+
+	/* NOTES
+		- Weird thing going on with ignoring wins
+		- No need for double -1*
+	*/
 
 	public void run() {
 		startTime = System.currentTimeMillis();
 		while(System.currentTimeMillis() - startTime < 30000) {
+			int alpha = infHolder.MIN;
 			for (Tuple t : moveEvals.keySet()) {
 				board.move(t);
-				moveEvals.put(t, -1*alphabeta(0, infHolder.MIN, infHolder.MAX));
-				board.takeBack(1);
+				int s = alphabeta_min(0, alpha, infHolder.MAX, t.clone());
+				moveEvals.put(t, s);
+				// if (lS.score > alpha) {
+				// 	System.out.println("Move " + t + " set alpha to " + lS.score + " from " + alpha + " at run.");
+				// 	alpha = lS.score;
+				// }
+				MoveRecord tb = board.takeBack(1);
 			}
-			if (verbose)
-				System.out.println(toString());
+			System.out.println(toString());
 			depth += 1;
-			// System.out.println("CRASHING ON PURPOSE LOL" + 0/0);
 		}
 	}
 
 	public int max(int x, int y) {
 		if (x > y)
+			return x;
+		if (x==y) {
+			if (Math.random() > 0.5)
+				return x;
+		}
+		return y;
+	}
+	public int min(int x, int y) {
+		if (x < y)
 			return x;
 		if (x==y) {
 			if (Math.random() > 0.5)
@@ -87,7 +121,7 @@ public class WeightedAlphaBetaThread extends Thread {
 			long evalTime = System.currentTimeMillis() - startTime;
 			out = "Depth " + depth + ", " + evals + " positions evaluated in " + evalTime + " millisenconds:\n";
 			for (Tuple t : moveEvals.keySet()) {
-				out += t.toString() + "\t" + moveEvals.get(t) + "\n";
+				out += t.toString() + "..." + moveEvals.get(t) + "\n";
 			}
 		} else {
 			out = "Minimax thread not yet running";

@@ -8,14 +8,107 @@ public class Tester {
 		// testMCBoardClone();
 		// testMinimax();
 		// testAlphaBeta();
-		// testMultiThread();
 		// testWeightedThread();
-		testComputerPlayer();
+		// testComputerPlayer();
+		// testMultiThread();
+		testVerboseThread();
+	}
+
+	public static void testVerboseThread() {
+		MCBoard board = new MCBoard();
+		int[] weights = {0,2,3,4,5};
+		board.move(2,0);
+		board.move(7,0);
+		board.move(3,0);
+		board.move(7,7);
+		board.move(4,0);
+		board.move(7,6);
+		ComputerPlayer cp = new ComputerPlayer(board, "Player C", weights, 'v');
+		print(board);
+		long start = System.currentTimeMillis();
+		cp.getMove();
+		long time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		System.out.println("-\t-\t-\t-\t-\t-\t-");
+		print(board);
+		while (board.winStatus == 2 && board.moveList.size() < 64) {
+			start = System.currentTimeMillis();
+			cp.getMove();
+			time = System.currentTimeMillis() - start;
+			System.out.println("That took " + time + "ms to run, total.");
+		System.out.println("-\t-\t-\t-\t-\t-\t-");
+			print(board);
+		}
+		System.out.println("Game over. Game history:\n");
+		for (MoveRecord m : board.moveList){
+			System.out.println(m.move);
+		}
+	}
+
+	public static void testMultiThread() {
+		MCBoard board = new MCBoard();
+		int[] weights = {0,2,3,4,5};
+		MultiThreadedComputerPlayer cp = new MultiThreadedComputerPlayer(board, "Quicky McCores", weights);
+		print(board);
+		long start = System.currentTimeMillis();
+		cp.getMove();
+		long time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
 	}
 
 	public static void testComputerPlayer(){
 		MCBoard board = new MCBoard();
-		int[] weights = {0,100,300,900,2700};
+		int[] weights = {0,2,3,4,5};
 		ComputerPlayer cp = new ComputerPlayer(board, "Player C", weights);
 		print(board);
 		long start = System.currentTimeMillis();
@@ -98,7 +191,7 @@ public class Tester {
 		wabt.start();
 	}
 
-	public static void testMultiThread(){
+/*	public static void OLDtestMultiThread(){
 		MCBoard board = new MCBoard();
 		board.move(5,0);
 		board.move(4,0);
@@ -119,7 +212,7 @@ public class Tester {
 		print("Starting eval: " + board.eval() + "\n");
 		GameThread gt = new GameThread((MCBoard)board.clone(), 2, true);
 		gt.start();
-	}
+	}*/
 
 	public static void testXYWins(){
 		XYWins w = new XYWins();

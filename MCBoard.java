@@ -79,8 +79,6 @@ public class MCBoard implements Cloneable{
     }
 
     public Tuple lastMove(int index){
-        // if (winStatus != 2) 
-        //     return moveListBackup.get(moveList.size()-(index+1)).move;
         return moveList.get(moveList.size()-(index+1)).move;
     }
 
@@ -99,6 +97,10 @@ public class MCBoard implements Cloneable{
             turn = !turn;
             updateWinner(r,c);
             if (winStatus != 2) {
+                // print("Win found for player " + winStatus + "...legalMoves status:\n");
+                // for (Tuple m : legalMoves)
+                //     print(m);
+                // print("\n");
                 legalMovesBackup = (LinkedList<Tuple>)legalMoves.clone();
                 legalMoves = new LinkedList<Tuple>();
                 moveList.add(new MoveRecord(move, null));
@@ -122,6 +124,38 @@ public class MCBoard implements Cloneable{
                 moveList.add(new MoveRecord(move, newSpot));
             }
         }
+        assertTurn();
+    }
+
+    public void assertTurn(){
+        // print("assertion called");
+        int count = 0;
+        int countX = 0;
+        int countO = 0;
+        for (int i=0;i!=8;i++){
+            for (int j=0;j!=8;j++){
+                if (grid[i][j] == 0){
+                    count++;
+                    countO++;
+                } else if (grid[i][j] == 1){
+                    count++;
+                    countX++;
+                }
+            }
+        }
+
+        if (count != moveList.size()){
+            print("Error! Count == " + count + ", and moveList.size() == " + moveList.size());
+        }
+
+        if (count % 2 == 0)
+            assert turn == true;
+        else
+            assert turn == false;
+
+        if (countX < countO) {
+            print("Error! CountX == " + countX + ", CountO == " + countO);
+        }
     }
 
     public synchronized void move(int x, int y){
@@ -139,9 +173,13 @@ public class MCBoard implements Cloneable{
         }
         MoveRecord oldMove = null;
         if (winStatus != 2) {
-            // print ("Taking back winner at " + lastMove(0) + "\n");
+            turn = !turn;
             winStatus = 2;
-            legalMoves = (LinkedList<Tuple>) legalMovesBackup.clone();
+            legalMoves = legalMovesBackup;
+            // print ("Taking back winner at " + lastMove(0) + ".. legalMoves status:\n");
+            // for (Tuple m : legalMoves)
+            //     print(m);
+            // print("\n");
             oldMove = moveList.remove(moveList.size()-1);
             grid[oldMove.move.x][oldMove.move.y] = 2;
             // print (oldMove.move + "removed.\n");
@@ -155,8 +193,8 @@ public class MCBoard implements Cloneable{
             grid[oldMove.move.x][oldMove.move.y] = 2;
             legalMoves.add(oldMove.move);
         }
+        assertTurn();
         return oldMove;
-    
     }
 
     public String toString() {
@@ -250,16 +288,7 @@ public class MCBoard implements Cloneable{
             }
             // For every line containing only the player's pieces, adds to score
             // weighted by the weights[] array
-            try{score += weights[lineScore];} catch (ArrayIndexOutOfBoundsException e) {
-                // print("Array index " + lineScore + " found when examining line:\n");
-                for (Tuple t : line) {
-                    // print ("\t"+t+", "+grid[t.x][t.y]+"\n");
-                }
-                // print("On board: " + toString());
-                // print("Last move played: " + lastMove(0) + "\n");
-                // print("Winstatus: " + winStatus + "\n\n");
-                int crash = 99/0;
-            }
+            score += weights[lineScore];
         }
         return score;
     }
@@ -292,7 +321,11 @@ public class MCBoard implements Cloneable{
                 }
             }
             if (winnerFound) {
-                // print("\t\tWinner found!\n\n");
+                // print("\t\tWinner found! last 4 moves:");
+                // for(int i=3; i>=0; i--){
+                //     print(lastMove(i));
+                // }
+                // print("..winner=" + winner + "\n");
                 // print(toString());
                 winStatus = winner;
                 break;
