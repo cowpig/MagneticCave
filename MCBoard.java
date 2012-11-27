@@ -293,9 +293,15 @@ public class MCBoard implements Cloneable{
             for (int i=0;i!=8;i++){
                 for (int j=0;j!=8;j++){
                     if (grid[i][j] == otherPlayer) {
-                        e -= scoreSpot(i,j,weights);
+                        if (weights.length == 7)
+                            e -= scoreSpot2(i,j,weights);
+                        else
+                            e -= scoreSpot(i,j,weights);
                     } else if (grid[i][j] == player)
-                        e += scoreSpot(i,j,weights);
+                        if (weights.length == 7)
+                            e += scoreSpot2(i,j,weights);
+                        else
+                            e += scoreSpot(i,j,weights);
                 }
             }
         }
@@ -311,6 +317,29 @@ public class MCBoard implements Cloneable{
         for (Tuple[] line : winMap.getWins(r, c)) {
             int lineScore = 0;
             for (Tuple t : line) {
+                // print(t);
+                if (grid[t.x][t.y] == otherPlayer ){
+                    lineScore = 0;
+                    break;
+                } else if (grid[t.x][t.y] == player) {
+                    lineScore++;
+                }
+            }//print("\n");
+            // For every line containing only the player's pieces, adds to score
+            // weighted by the weights[] array
+            score += weights[lineScore];
+        }
+        return score;
+    }
+
+    public int scoreSpot2(int r, int c, int[] weights) {
+        int score = 0;
+        int player = grid[r][c];
+        int otherPlayer = (player==0) ? 1 : 0;
+        // Iterates through every win line which contains a certain spot
+        for (Tuple[] line : winMap.getWins(r, c)) {
+            int lineScore = 0;
+            for (Tuple t : line) {
                 if (grid[t.x][t.y] == otherPlayer ){
                     lineScore = 0;
                     break;
@@ -318,6 +347,7 @@ public class MCBoard implements Cloneable{
                     lineScore++;
                 }
             }
+
             // For every line containing only the player's pieces, adds to score
             // weighted by the weights[] array
             score += weights[lineScore];

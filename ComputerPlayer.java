@@ -11,7 +11,7 @@ public class ComputerPlayer extends Player{
 		this.name = name;
 		this.type = 'w';
 		this.weights = weights;
-		this.timePerMove = 3000L;
+		this.timePerMove = 300L;
 	}
 
 	public ComputerPlayer(MCBoard board, String name, int[] weights, char type) {

@@ -14,7 +14,7 @@ public class WeightedAlphaBetaThread extends Thread {
 
 	public WeightedAlphaBetaThread(MCBoard board, int[] weights) {
 		this.board = board;
-		depth = 6;
+		depth = 2;
 		moveEvals = new HashMap<Tuple, Integer>();
 		for (Tuple t : board.legalMoves) {
 			moveEvals.put(t, 0);

@@ -15,7 +15,7 @@ public class MultiThreadedComputerPlayer extends Player{
 		this.board = board;
 		this.name = name;
 		this.weights = weights;
-		this.timePerMove = 2950L;
+		this.timePerMove = 300L; // remember to adjust depth
 	}
 
 	public void getMove(){

@@ -10,21 +10,21 @@ public class WeightsFinder {
 		players.add(new RandomPlayer(board, "Player Random1"));
 		players.add(new RandomPlayer(board, "Player Random2"));
 		int[] weights = new int[] {0,2,3,4,5};
-		players.add(new ComputerPlayer(board, "Player {0,2,3,4,5}", weights));
+		players.add(new ComputerPlayer(board, "CPlayer {0,2,3,4,5}", weights));
 		weights = new int[] {0,1,2,4,16};
-		players.add(new ComputerPlayer(board, "Player {0,1,2,4,16}", weights));
+		players.add(new ComputerPlayer(board, "CPlayer {0,1,2,4,16}", weights));
 		weights = new int[] {0,1,1,1,1};
-		players.add(new ComputerPlayer(board, "Player {0,1,1,1,1}", weights));
+		players.add(new ComputerPlayer(board, "CPlayer {0,1,1,1,1}", weights));
 		weights = new int[] {0,1,4,16,64};
-		players.add(new ComputerPlayer(board, "Player {0,1,4,16,64}", weights));
-		// weights = new int[] {0,2,3,4,5};
-		// players.add(new MultiThreadedComputerPlayer(board, "Player {0,2,3,4,5}", weights));
-		// weights = new int[] {0,1,2,4,16};
-		// players.add(new MultiThreadedComputerPlayer(board, "Player {0,1,2,4,16}", weights));
-		// weights = new int[] {0,1,1,1,1};
-		// players.add(new MultiThreadedComputerPlayer(board, "Player {0,1,1,1,1}", weights));
-		// weights = new int[] {0,1,4,16,64};
-		// players.add(new MultiThreadedComputerPlayer(board, "Player {0,1,4,16,64}", weights));
+		players.add(new ComputerPlayer(board, "CPlayer {0,1,4,16,64}", weights));
+		weights = new int[] {0,2,3,4,5};
+		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,2,3,4,5}", weights));
+		weights = new int[] {0,1,2,4,16};
+		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,2,4,16}", weights));
+		weights = new int[] {0,1,1,1,1};
+		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,1,1,1}", weights));
+		weights = new int[] {0,1,4,16,64};
+		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,4,16,64}", weights));
 
 
 		HashMap<Player, Float> scores = new HashMap<Player, Float>();
