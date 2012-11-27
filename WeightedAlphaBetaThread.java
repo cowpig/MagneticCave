@@ -7,14 +7,14 @@ public class WeightedAlphaBetaThread extends Thread {
 	public int depth;
 	public HashMap<Tuple, Integer> moveEvals;
 	boolean cont = true;
-	boolean verbose = true;
+	boolean verbose = false;
 	public int evals = 0;
 	public long startTime = -1L;
 	public int[] weights;
 
 	public WeightedAlphaBetaThread(MCBoard board, int[] weights) {
 		this.board = board;
-		depth = 1;
+		depth = 3;
 		moveEvals = new HashMap<Tuple, Integer>();
 		for (Tuple t : board.legalMoves) {
 			moveEvals.put(t, new Integer(0));

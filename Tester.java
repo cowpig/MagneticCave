@@ -9,7 +9,69 @@ public class Tester {
 		// testMinimax();
 		// testAlphaBeta();
 		// testMultiThread();
-		testWeightedThread();
+		// testWeightedThread();
+		testComputerPlayer();
+	}
+
+	public static void testComputerPlayer(){
+		MCBoard board = new MCBoard();
+		int[] weights = {0,100,300,900,2700};
+		ComputerPlayer cp = new ComputerPlayer(board, "Player C", weights);
+		print(board);
+		long start = System.currentTimeMillis();
+		cp.getMove();
+		long time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		print(board);
+		start = System.currentTimeMillis();
+		cp.getMove();
+		time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
 	}
 
 	public static void testWeightedThread(){

@@ -6,6 +6,8 @@ public class MoveRecord implements Cloneable{
 		this.newSpot = newSpot;
 	}
 	public MoveRecord clone() {
+		if (newSpot == null)
+			return new MoveRecord(move.clone(), null);
 		return new MoveRecord(move.clone(), newSpot.clone());
 	}
 }

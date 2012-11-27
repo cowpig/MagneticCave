@@ -36,6 +36,22 @@ public class MCBoard implements Cloneable{
         moveList = new ArrayList<MoveRecord>();
     }
 
+    public void reset(){
+        legalMoves = new LinkedList<Tuple>();
+        for (int i=0; i < grid.length; i++) {
+            for (int j=0; j<grid[i].length; j++){
+                grid[i][j] = 2;
+            }
+        }
+        for (int row: orderedMoves) {
+            legalMoves.add(new Tuple(row, 0));
+            legalMoves.add(new Tuple(row, 7));
+        }
+        moveList = new ArrayList<MoveRecord>();
+        turn = true;
+        winStatus = 2;
+    }
+
     public MCBoard
         (int[][] grid, boolean turn, LinkedList<Tuple> legalMoves, ArrayList<MoveRecord> moveList) {
             this.grid = grid;
@@ -283,7 +299,20 @@ public class MCBoard implements Cloneable{
                 // int c = 90/0;
             }
         }
+    }
 
+    public String dump(){
+        String out = "Board state:\n";
+        out += toString();
+        out += "Move history:\n";
+        for (MoveRecord m : moveList) {
+            out += m.move + ", ";
+        }
+        out += "\n\nCurrent legal moves: ";
+        for (Tuple m : legalMoves) {
+            out += m + ", ";
+        }
+        return out;
     }
 
     // returns 2 for nobody, 0 for O and 1 for X
