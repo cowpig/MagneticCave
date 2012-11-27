@@ -106,21 +106,37 @@ public class MCBoard implements Cloneable{
                 moveList.add(new MoveRecord(move, null));
             } else {
                 legalMoves.remove(move);
+                // print("Removing " + move + " from legalMoves.\nResulting list: ");
+                // for (Tuple t : legalMoves)
+                //     print(t + ", ");
+                // print("\n");
                 Tuple newSpot = null;
                 // check left
                 if (c!=0){
                     if (grid[r][c-1]==2) {
-                        newSpot = new Tuple(r, c-1);
-                        legalMoves.addFirst(newSpot);
+                        Tuple t = new Tuple(r, c-1);
+                        if (!legalMoves.contains(t)){
+                            // System.out.println("Adding " + newSpot + " to legalMoves.");
+                            legalMoves.addFirst(t);
+                            newSpot = t;
+                        }
                     }
                 }
                 // check right
                 if (c!=7){
                     if (grid[r][c+1]==2) {
-                        newSpot = new Tuple(r, c+1);
-                        legalMoves.addFirst(newSpot);
+                        Tuple t = new Tuple(r, c+1);
+                        if (!legalMoves.contains(t)){
+                            // System.out.println("Adding " + newSpot + " to legalMoves.");
+                            legalMoves.addFirst(t);
+                            newSpot = t;
+                        }
                     }
                 }
+                // print("Resulting list: ");
+                // for (Tuple t : legalMoves)
+                //     print(t + ", ");
+                // print("\n");
                 moveList.add(new MoveRecord(move, newSpot));
             }
         }
@@ -146,15 +162,28 @@ public class MCBoard implements Cloneable{
 
         if (count != moveList.size()){
             print("Error! Count == " + count + ", and moveList.size() == " + moveList.size());
+            print("\n" + dump());
+            int x = 0/0;
         }
 
-        if (count % 2 == 0)
-            assert turn == true;
-        else
-            assert turn == false;
+        if (count % 2 == 0) {
+            if (turn == false) {
+                print("Error! Wrong player's turn!");
+               print("\n" + dump());
+                int x = 0/0;
+            }
+        } else {
+            if (turn == true) {
+                print("Error! Wrong player's turn!");
+              print("\n" + dump());
+                int x = 0/0;
+            }
+        }
 
         if (countX < countO) {
             print("Error! CountX == " + countX + ", CountO == " + countO);
+            print("\n" + dump());
+            int x = 0/0;
         }
     }
 
@@ -181,7 +210,8 @@ public class MCBoard implements Cloneable{
             //     print(m);
             // print("\n");
             oldMove = moveList.remove(moveList.size()-1);
-            grid[oldMove.move.x][oldMove.move.y] = 2;
+            if (oldMove.move != null)
+                grid[oldMove.move.x][oldMove.move.y] = 2;
             // print (oldMove.move + "removed.\n");
             n -= 1;
         }
@@ -190,8 +220,10 @@ public class MCBoard implements Cloneable{
             // print ("Taking back move " + oldMove.move + "\n");
             turn = !turn;
             legalMoves.remove(oldMove.newSpot);
-            grid[oldMove.move.x][oldMove.move.y] = 2;
-            legalMoves.add(oldMove.move);
+            if (oldMove.move != null){
+                grid[oldMove.move.x][oldMove.move.y] = 2;
+                legalMoves.add(oldMove.move);
+            }
         }
         assertTurn();
         return oldMove;
@@ -339,7 +371,7 @@ public class MCBoard implements Cloneable{
         out += toString();
         out += "Move history:\n";
         for (MoveRecord m : moveList) {
-            out += m.move + ", ";
+            out += m.move + "+[" + m.newSpot + "], ";
         }
         out += "\n\nCurrent legal moves: ";
         for (Tuple m : legalMoves) {

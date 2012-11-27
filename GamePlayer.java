@@ -21,6 +21,16 @@ public class GamePlayer {
 				int[] weights = {0,2,3,4,5};
 				o = new ComputerPlayer(board, "Computer Player", weights);
 				x = new HumanPlayer(board, key);
+			} else if (args[0].equals("m1")){
+				System.out.println("Beginning Magnetic Cave: Multithreaded Computer vs Human.");
+				int[] weights = {0,2,3,4,5};
+				x = new MultiThreadedComputerPlayer(board, "Multithreaded Computer Player", weights);
+				o = new HumanPlayer(board, key);
+			} else if (args[0] == "m2") {
+				System.out.println("Beginning Magnetic Cave: Human vs Multithreaded Computer.");
+				int[] weights = {0,2,3,4,5};
+				o = new MultiThreadedComputerPlayer(board, "Multithreaded Computer Player", weights);
+				x = new HumanPlayer(board, key);
 			}
 		}
 		if (x == null || o == null) {

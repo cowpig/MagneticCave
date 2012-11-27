@@ -86,16 +86,6 @@ public class VerboseWeightedAlphaBetaThread extends Thread {
 	    for (Tuple chosenMove : list) {
 	        board.move(chosenMove);
 	    	System.out.println("Now searching move " + chosenMove + ", a=" + alpha + ", b=" + beta + " max");
-	        if (lastMove.equals(new Tuple(0,0))){
-	        	for (MoveRecord m : board.moveList){
-	        		System.out.print(m.move + "[+" + m.newSpot + "],");
-	        	}
-	        	System.out.print("\n");
-	        	for (Tuple m : board.legalMoves){
-	        		System.out.print(m);
-	        	}
-	        	System.out.print("\n");
-	        }
 	        lS = alphabeta_min(currentDepth+1, alpha, beta, chosenMove.clone());
 	        if (a < lS.score) {
 	    		bestMove = chosenMove;

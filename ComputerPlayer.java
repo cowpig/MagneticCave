@@ -51,7 +51,7 @@ public class ComputerPlayer extends Player{
 			VerboseWeightedAlphaBetaThread engine = new VerboseWeightedAlphaBetaThread(board.clone(), weights);
 			engine.start();
 			try {
-				Thread.sleep(200L);
+				Thread.sleep(3000L);
 			} catch (InterruptedException e) {System.out.println(e);}
 			engine.stop();
 			int best = infHolder.MIN;

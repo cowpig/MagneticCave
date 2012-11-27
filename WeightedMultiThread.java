@@ -2,6 +2,7 @@
 import java.util.HashMap;
 import java.lang.Math;
 import java.util.concurrent.CyclicBarrier;
+import java.util.LinkedList;
 
 public class WeightedMultiThread extends Thread {
 	public MCBoard board;
@@ -12,63 +13,100 @@ public class WeightedMultiThread extends Thread {
 	CyclicBarrier barrier;
 	public long startTime = -1L;
 	public Tuple move;
+	boolean cont = true;
 
 	public WeightedMultiThread(MCBoard board, int[] weights, CyclicBarrier barrier) {
 		this.board = board;
-		depth = 5;
+		depth = 4;
 		this.eval = 0;
 		this.weights = weights;
 		this.barrier = barrier;
 		this.move = board.lastMove(0);
 	}
 
-	public int alphabeta(int currentDepth, int alpha, int beta) {
-    	// System.out.println("\n============\nAlpha-Beta called: depth " + currentDepth + " on position");
-    	// System.out.println("Alpha at " + alpha + ", beta at " + beta);
-    	// System.out.println(board);
+	public int alphabeta_min(int currentDepth, int alpha, int beta) {
+		if (!cont)
+			return 0;
+	    if (currentDepth >= depth || board.legalMoves.isEmpty()) {
+	    	if (currentDepth==0 && board.winStatus != 2) {
+	    		return Integer.MAX_VALUE;
+	    	}
+	    	int eval = -1*board.eval(weights);
+	    	evals++;
+	    	return eval;
+	    }
+	    int b = infHolder.MAX + 1;
+	    LinkedList<Tuple> list = (LinkedList<Tuple>) board.legalMoves.clone();
+	    for (Tuple chosenMove : list) {
+	        board.move(chosenMove);
+	        int s = alphabeta_max(currentDepth+1, alpha, beta);
+	        b = min(b, s);
+	        if (b < alpha) {
+		        	board.takeBack(1);
+	        	return b;
+	        }
+	        if (b < beta) {
+	        	beta = b;
+	        }
+	        	board.takeBack(1);
+	    }
+	    return b;
+	}
+
+	public int alphabeta_max(int currentDepth, int alpha, int beta) {
+		if (!cont)
+			return 0;
 	    if (currentDepth >= depth || board.legalMoves.isEmpty()) {
 	    	int eval = board.eval(weights);
 	    	evals++;
-	    	// System.out.println("Returning eval: " + eval);
-	    	// if (eval < -1000000 || eval > 1000000)
-	    		// System.out.println("WIN DETECTED");
 	    	return eval;
 	    }
-	    int x = infHolder.MIN;
-	    for (int i=0;i<board.legalMoves.size();i++) {
-	    	//	Tuple move = board.legalMoves.get(i).clone();
-	    	// System.out.println("Now searching move " + move);
-	        board.move(board.legalMoves.get(i));
-	        int x0 = -1*alphabeta(currentDepth+1, beta*-1, alpha*-1);
-	        if (x0 >= beta) {
-	        	// System.out.println("Move " + move + " better than beta at eval " + x0);
-	        	board.takeBack(1);
+	    int a = infHolder.MIN - 1;
+	    LinkedList<Tuple> list = (LinkedList<Tuple>) board.legalMoves.clone();
+	    for (Tuple chosenMove : list) {
+	        board.move(chosenMove);
+	        int s = alphabeta_min(currentDepth+1, alpha, beta);
+	        a = max(a, s);
+	        if (a >= beta) {
+		        	board.takeBack(1);
 	        	return beta;
 	        }
-	        if (x0 > alpha) {
-	        	// System.out.println("Move " + move + " sets alpha to " + x0);
-	        	alpha = x;
+	        if (a > alpha) {
+	        	alpha = a;
 	        }
-	        x = max(x,x0);
-	        board.takeBack(1);
-	        // MoveRecord oldMove = board.takeBack(1);
-	        // System.out.println("Took back " + oldMove.move + " at depth " + currentDepth);
+	        	board.takeBack(1);
 	    }
-	    return x;
+	    return a;
 	}
 
 	public void run() {
 		startTime = System.currentTimeMillis();
-		while(true) {
-			int nextEval = alphabeta(0, infHolder.MIN, infHolder.MAX);
+		while(cont) {
+			int nextEval = alphabeta_min(0, infHolder.MIN, infHolder.MAX);
 			try{barrier.await();} catch (Exception e) {}
-			eval = nextEval;
-			depth += 1;
+			if (cont) {
+				eval = nextEval;
+				depth += 1;
+				// System.out.println(this.getName() + " now at depth " + depth);
+			}
 		}
+	}
+
+	public void kill(){
+		this.cont = false;
 	}
 
 	public int max(int x, int y) {
 		if (x > y)
+			return x;
+		if (x==y) {
+			if (Math.random() > 0.5)
+				return x;
+		}
+		return y;
+	}
+	public int min(int x, int y) {
+		if (x < y)
 			return x;
 		if (x==y) {
 			if (Math.random() > 0.5)
@@ -87,5 +125,6 @@ public class WeightedMultiThread extends Thread {
 		return out;
 	}
 }
+
 
 

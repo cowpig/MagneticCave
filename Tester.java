@@ -10,8 +10,8 @@ public class Tester {
 		// testAlphaBeta();
 		// testWeightedThread();
 		// testComputerPlayer();
-		// testMultiThread();
-		testVerboseThread();
+		testMultiThread();
+		// testVerboseThread();
 	}
 
 	public static void testVerboseThread() {
@@ -48,6 +48,40 @@ public class Tester {
 	public static void testMultiThread() {
 		MCBoard board = new MCBoard();
 		int[] weights = {0,2,3,4,5};
+		board.move(2,0);
+		board.move(7,0);
+		board.move(3,0);
+		board.move(7,7);
+		board.move(4,0);
+		board.move(7,6);
+		MultiThreadedComputerPlayer cp = new MultiThreadedComputerPlayer(board, "Quicky McCores", weights);
+		print(board);
+		long start = System.currentTimeMillis();
+		cp.getMove();
+		long time = System.currentTimeMillis() - start;
+		System.out.println("That took " + time + "ms to run, total.");
+		System.out.println("-\t-\t-\t-\t-\t-\t-");
+		print(board);
+		while (board.winStatus == 2 && board.moveList.size() < 64) {
+			start = System.currentTimeMillis();
+			cp.getMove();
+			time = System.currentTimeMillis() - start;
+			System.out.println("That took " + time + "ms to run, total.");
+		System.out.println("-\t-\t-\t-\t-\t-\t-");
+			print(board);
+		}
+		System.out.println("Game over. Game history:\n");
+		for (MoveRecord m : board.moveList){
+			System.out.println(m.move);
+		}
+		testMultiThread2();
+	}
+	public static void testMultiThread2(){
+		System.out.println("===================== =========== =====================");
+		System.out.println("===================== TEST PART 2 =====================");
+		System.out.println("===================== =========== =====================");
+		MCBoard board = new MCBoard();
+		int[] weights = {0,2,3,4,5};
 		MultiThreadedComputerPlayer cp = new MultiThreadedComputerPlayer(board, "Quicky McCores", weights);
 		print(board);
 		long start = System.currentTimeMillis();
@@ -55,55 +89,18 @@ public class Tester {
 		long time = System.currentTimeMillis() - start;
 		System.out.println("That took " + time + "ms to run, total.");
 		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
+		while (board.winStatus == 2 && board.moveList.size() < 64) {
+			start = System.currentTimeMillis();
+			cp.getMove();
+			time = System.currentTimeMillis() - start;
+			System.out.println("That took " + time + "ms to run, total.");
+		System.out.println("-\t-\t-\t-\t-\t-\t-");
+			print(board);
+		}
+		System.out.println("Game over. Game history:\n");
+		for (MoveRecord m : board.moveList){
+			System.out.println(m.move);
+		}
 	}
 
 	public static void testComputerPlayer(){
@@ -116,55 +113,18 @@ public class Tester {
 		long time = System.currentTimeMillis() - start;
 		System.out.println("That took " + time + "ms to run, total.");
 		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
-		print(board);
-		start = System.currentTimeMillis();
-		cp.getMove();
-		time = System.currentTimeMillis() - start;
-		System.out.println("That took " + time + "ms to run, total.");
+		while (board.winStatus == 2 && board.moveList.size() < 64) {
+			start = System.currentTimeMillis();
+			cp.getMove();
+			time = System.currentTimeMillis() - start;
+			System.out.println("That took " + time + "ms to run, total.");
+		System.out.println("-\t-\t-\t-\t-\t-\t-");
+			print(board);
+		}
+		System.out.println("Game over. Game history:\n");
+		for (MoveRecord m : board.moveList){
+			System.out.println(m.move);
+		}
 	}
 
 	public static void testWeightedThread(){

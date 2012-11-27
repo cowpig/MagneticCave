@@ -2,7 +2,7 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MultiThreadedComputerPlayer {
+public class MultiThreadedComputerPlayer extends Player{
 	public MCBoard board;
 	public String name = "Computer Player";
 	public boolean log = false;
@@ -27,9 +27,11 @@ public class MultiThreadedComputerPlayer {
 		// When all threads are finished, the move evaluations are updated and the threads continue their work.
 		CyclicBarrier barrier = new CyclicBarrier(n, new Runnable(){
 			public void run() {
+				System.out.println("Updating evals...");
 				for(WeightedMultiThread t : threadList){
 					moveEvals.put(t.move, t.eval);
 				}
+				System.out.println("...done. Threads may now continue.");
 			}
 		});
 
@@ -47,7 +49,13 @@ public class MultiThreadedComputerPlayer {
 			Thread.sleep(timePerMove);
 		} catch (InterruptedException e) {System.out.println(e);}
 		for (WeightedMultiThread t : threadList) {
-			t.stop();
+			t.kill();
+		}
+		for (WeightedMultiThread t : threadList) {
+			System.out.println(t.getName() + " stopped.");
+			try {
+				t.join();
+			} catch (InterruptedException e) {System.out.println(e);}
 		}
 
 		// Play the best move
