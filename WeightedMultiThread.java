@@ -17,7 +17,7 @@ public class WeightedMultiThread extends Thread {
 
 	public WeightedMultiThread(MCBoard board, int[] weights, CyclicBarrier barrier) {
 		this.board = board;
-		depth = 1;
+		depth = 5;
 		this.eval = 0;
 		this.weights = weights;
 		this.barrier = barrier;

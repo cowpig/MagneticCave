@@ -16,7 +16,7 @@ public class GamePlayer {
 				int[] weights = {0,2,3,4,5};
 				x = new ComputerPlayer(board, "Computer Player", weights);
 				o = new HumanPlayer(board, key);
-			} else if (args[0] == "c2") {
+			} else if (args[0].equals("c2")) {
 				System.out.println("Beginning Magnetic Cave: Human vs Computer.");
 				int[] weights = {0,2,3,4,5};
 				o = new ComputerPlayer(board, "Computer Player", weights);
@@ -26,7 +26,7 @@ public class GamePlayer {
 				int[] weights = {0,2,3,4,5};
 				x = new MultiThreadedComputerPlayer(board, "Multithreaded Computer Player", weights);
 				o = new HumanPlayer(board, key);
-			} else if (args[0] == "m2") {
+			} else if (args[0].equals("m2")) {
 				System.out.println("Beginning Magnetic Cave: Human vs Multithreaded Computer.");
 				int[] weights = {0,2,3,4,5};
 				o = new MultiThreadedComputerPlayer(board, "Multithreaded Computer Player", weights);

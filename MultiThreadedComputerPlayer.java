@@ -10,15 +10,17 @@ public class MultiThreadedComputerPlayer extends Player{
 	public long timePerMove;
 	public ArrayList<WeightedMultiThread> threadList;
 	public HashMap<Tuple, Integer> moveEvals;
+	public long startTime = -1L;
 
 	public MultiThreadedComputerPlayer(MCBoard board, String name, int[] weights) {
 		this.board = board;
 		this.name = name;
 		this.weights = weights;
-		this.timePerMove = 300L; // remember to adjust depth
+		this.timePerMove = 3000L; // remember to adjust depth
 	}
 
 	public void getMove(){
+		startTime = System.currentTimeMillis();
 		int n = board.legalMoves.size();
 		threadList = new ArrayList<WeightedMultiThread>();
 		moveEvals = new HashMap<Tuple, Integer>();
@@ -52,9 +54,10 @@ public class MultiThreadedComputerPlayer extends Player{
 			t.kill();
 		}
 		for (WeightedMultiThread t : threadList) {
-			System.out.println(t.getName() + " stopped.");
 			try {
+				System.out.println("Stopping " + t.getName());
 				t.join();
+				System.out.println(t.getName() + " stopped.");
 			} catch (InterruptedException e) {System.out.println(e);}
 		}
 
@@ -67,7 +70,8 @@ public class MultiThreadedComputerPlayer extends Player{
 				nextMove = m;
 			}
 		}
-		System.out.println(nextMove + " is the choice of " + name + " given evals:");
+		long timeElapsed = System.currentTimeMillis() - startTime;
+		System.out.println(nextMove + " is the choice of " + name + " in " + timeElapsed + " with evals:");
 		for (WeightedMultiThread t : threadList) {
 			System.out.println(t);
 		}

@@ -8,7 +8,15 @@ public class WeightsFinder {
 
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(new RandomPlayer(board, "Player Random1"));
-		players.add(new RandomPlayer(board, "Player Random2"));
+		// players.add(new RandomPlayer(board, "Player Random2"));
+		// int[] weights = new int[] {0,2,3,4,5};
+		// players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,2,3,4,5}", weights));
+		// weights = new int[] {0,1,2,4,16};
+		// players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,2,4,16}", weights));
+		// weights = new int[] {0,1,1,1,1};
+		// players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,1,1,1}", weights));
+		// weights = new int[] {0,1,4,16,64};
+		// players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,4,16,64}", weights));
 		int[] weights = new int[] {0,2,3,4,5};
 		players.add(new ComputerPlayer(board, "CPlayer {0,2,3,4,5}", weights));
 		weights = new int[] {0,1,2,4,16};
@@ -17,14 +25,14 @@ public class WeightsFinder {
 		players.add(new ComputerPlayer(board, "CPlayer {0,1,1,1,1}", weights));
 		weights = new int[] {0,1,4,16,64};
 		players.add(new ComputerPlayer(board, "CPlayer {0,1,4,16,64}", weights));
-		weights = new int[] {0,2,3,4,5};
-		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,2,3,4,5}", weights));
-		weights = new int[] {0,1,2,4,16};
-		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,2,4,16}", weights));
-		weights = new int[] {0,1,1,1,1};
-		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,1,1,1}", weights));
-		weights = new int[] {0,1,4,16,64};
-		players.add(new MultiThreadedComputerPlayer(board, "MPlayer {0,1,4,16,64}", weights));
+		weights = new int[] {1,2,3,4,5};
+		players.add(new ComputerPlayer(board, "CPlayer {1,2,3,4,5}", weights));
+		weights = new int[] {1,1,2,4,16};
+		players.add(new ComputerPlayer(board, "CPlayer {1,1,2,4,16}", weights));
+		weights = new int[] {1,1,1,1,1};
+		players.add(new ComputerPlayer(board, "CPlayer {1,1,1,1,1}", weights));
+		weights = new int[] {1,1,4,16,64};
+		players.add(new ComputerPlayer(board, "CPlayer {1,1,4,16,64}", weights));
 
 
 		HashMap<Player, Float> scores = new HashMap<Player, Float>();
@@ -68,6 +76,10 @@ public class WeightsFinder {
 					reports.put(o, reports.get(o) + "draw vs " + x + "\n");
 				}
 			}
+			System.out.println("STANDINGS AFTER THAT GAME:");
+			for (Player p : players) {
+		    	System.out.println(p + "\t\t" + scores.get(p).floatValue());
+		    }
 		}
 		String outFile = "output" + (int)(Math.random()*10000);
 		System.out.println("Recording final scores to file...");
